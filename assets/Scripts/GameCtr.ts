@@ -36,6 +36,10 @@ export class GameCtr extends Component {
         type:Label
     })
     public nameLabel:Label
+    @property({
+        type:Prefab
+    })
+    public anotherPlayer:Prefab
     public socket:Socket
 
     protected onLoad(): void {
