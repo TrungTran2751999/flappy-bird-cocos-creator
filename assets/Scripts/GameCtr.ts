@@ -1,7 +1,9 @@
-import { _decorator, CCFloat, Collider2D, Component, Contact2DType, director, EventKeyboard, Input, input, instantiate, IPhysics2DContact, KeyCode, loader, Node, Prefab } from 'cc';
+import { _decorator, CCFloat, Collider2D, Component, Contact2DType, director, EventKeyboard, Input, input, instantiate, IPhysics2DContact, KeyCode, Label, loader, Node, Prefab } from 'cc';
 import { Ground } from './Ground';
 import { Bird } from './Bird';
 import { Pipe } from './Pipe';
+import { GlobalVariable } from './GlobalVariable';
+import { Socket } from './Socket';
 const { ccclass, property } = _decorator;
 
 @ccclass('GameCtr')
@@ -30,9 +32,29 @@ export class GameCtr extends Component {
         type:Node
     })
     public nodePre:Node
-    protected onLoad(): void {
-        this.initListener()
+    @property({
+        type:Label
+    })
+    public nameLabel:Label
+    public socket:Socket
 
+    protected onLoad(): void {
+        this.initListener();
+        this.nameLabel.string = GlobalVariable.player
+        this.socket = Socket.getInstance();
+        this.socket.initSocket.addEventListener("open", ()=>{
+            this.socket.initSocket.send(
+            `{"type": "joined","name" :"${this.nameLabel.string}", "isShared":true}`)
+        });
+
+        this.socket.initSocket.addEventListener("message", (event)=>{
+            try{
+                let result = JSON.parse(event.data);
+                console.log(result)
+            }catch{
+                console.log(event.data)
+            }
+        });
     }
     initListener(){
         input.on(Input.EventType.KEY_DOWN, this.onKeyDown, this)

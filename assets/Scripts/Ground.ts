@@ -1,5 +1,6 @@
 import { _decorator, Component, EditBox, Node, UI, UITransform, Vec3 } from 'cc';
 import { GameCtr } from './GameCtr';
+import { Socket } from './Socket';
 const { ccclass, property } = _decorator;
 
 @ccclass('Ground')
@@ -30,6 +31,7 @@ export class Ground extends Component {
     public gameCtrl = new GameCtr;
     public tempStartLocation1 = new Vec3;
     public tempStartLocation2 = new Vec3;
+
     protected start(): void {
         this.startup();
     }

@@ -1,4 +1,7 @@
-import { _decorator, CCFloat, Component, EventKeyboard, Input, input, KeyCode, Node, sp, Vec3, Animation, tween, easing} from 'cc';
+import { _decorator, CCFloat, Component, EventKeyboard, Input, input, KeyCode, Node, sp, Vec3, Animation, tween, easing, Label} from 'cc';
+import { GameCtr } from './GameCtr';
+import { GlobalVariable } from './GlobalVariable';
+import { Socket } from './Socket';
 const { ccclass, property } = _decorator;
 
 @ccclass('Bird')
@@ -11,14 +14,18 @@ export class Bird extends Component {
         type:CCFloat
     })
     public jumpDuration:number = 0
+    @property({
+        type:Label
+    })
+    public namebird:Label
     public birdAnimation:Animation
     public birdLocation:Vec3
     public hitSomething:boolean = false
-    public socket:WebSocket
+    public socket:Socket
     protected onLoad(): void {
         this.resetBird();
         this.birdAnimation = this.getComponent(Animation)
-        this.socket = new WebSocket("ws://localhost:3000");
+        this.socket = Socket.getInstance()
     }
     resetBird(){
         this.birdLocation = new Vec3(0,0,0);
@@ -33,11 +40,12 @@ export class Bird extends Component {
                 }
             }).start();
         let pos = {
+            type: "position",
             x: this.node.position.x,
-            y: this.node.position.y
+            y: this.node.position.y,
+            isShared: true
         }
-        this.socket.send(JSON.stringify(pos))
-        // this.socket.send(JSON.stringify(this.posBird))
+        this.socket.initSocket.send(JSON.stringify(pos))
         this.birdAnimation.play();
     }
 }
