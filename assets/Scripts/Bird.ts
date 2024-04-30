@@ -23,7 +23,7 @@ export class Bird extends Component {
     public hitSomething:boolean = false
     public socket:Socket
     protected onLoad(): void {
-        this.resetBird();
+        // this.resetBird();
         this.birdAnimation = this.getComponent(Animation)
         this.socket = Socket.getInstance()
     }

@@ -27,13 +27,13 @@ export class Pipe extends Component {
         this.initPosBottom = this.bottomPipe.getPosition()
     }
     protected update(dt: number): void {
-        this.initPosTop.x -= this.speed*dt
-        this.initPosBottom.x -= this.speed*dt
-        this.topPipe.setPosition(this.initPosTop)
-        this.bottomPipe.setPosition(this.initPosBottom)
-        if(this.topPipe.getPosition().x < this.limitPipe.getPosition().x){
-            this.node.destroy();
-        }
+        // this.initPosTop.x -= this.speed*dt
+        // this.initPosBottom.x -= this.speed*dt
+        // this.topPipe.setPosition(this.initPosTop)
+        // this.bottomPipe.setPosition(this.initPosBottom)
+        // if(this.topPipe.getPosition().x < this.limitPipe.getPosition().x){
+        //     this.node.destroy();
+        // }
     }
 
 }

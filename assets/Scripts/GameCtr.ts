@@ -4,6 +4,7 @@ import { Bird } from './Bird';
 import { Pipe } from './Pipe';
 import { GlobalVariable } from './GlobalVariable';
 import { Socket } from './Socket';
+import { AnotherPlayer } from './AnotherPlayer';
 const { ccclass, property } = _decorator;
 
 @ccclass('GameCtr')
@@ -40,8 +41,12 @@ export class GameCtr extends Component {
         type:Prefab
     })
     public anotherPlayer:Prefab
+    @property({
+        type:Node
+    })
+    public listAnotherPlayer:Node
     public socket:Socket
-
+    public init:boolean = true
     protected onLoad(): void {
         this.initListener();
         this.nameLabel.string = GlobalVariable.player
@@ -50,13 +55,44 @@ export class GameCtr extends Component {
             this.socket.initSocket.send(
             `{"type": "joined","name" :"${this.nameLabel.string}", "isShared":true}`)
         });
-
         this.socket.initSocket.addEventListener("message", (event)=>{
             try{
                 let result = JSON.parse(event.data);
-                console.log(result)
-            }catch{
+                //lay cac player khac dang nhap vao
+                if(result.type=="joined"){
+                    let instanceOtherPlayer = instantiate(this.anotherPlayer)
+                    let anotherPlayer = instanceOtherPlayer.getComponent(AnotherPlayer)
+                    anotherPlayer.labelName.string = result.name
+                    if(result.name!==this.nameLabel.string){
+                        this.listAnotherPlayer.addChild(instanceOtherPlayer)
+                    }
+                }
+                //lay list player da vao san khi moi dang nhap
+                if(result.type=="server"){
+                   for(let i=0; i<result.listPlayer?.length; i++){
+                    let instanceOtherPlayer = instantiate(this.anotherPlayer)
+                    let anotherPlayer = instanceOtherPlayer.getComponent(AnotherPlayer)
+                    anotherPlayer.labelName.string = result.listPlayer[i].name
+                    this.listAnotherPlayer.addChild(instanceOtherPlayer)
+                   }
+                }
+                //lay player dang xuat
+                if(result.type == "exit"){
+                    let listPlayer = this.listAnotherPlayer.children;
+                    for(let i=0; i<listPlayer.length; i++){
+                        let anotherPlayer = listPlayer[i].getComponent(AnotherPlayer);
+                        if(anotherPlayer.labelName.string==result.name){
+                            listPlayer[i].destroy();
+                        }
+                    }
+                }
+                if(this.init){
+                    this.bird.resetBird()
+                    this.init = false
+                }
+            }catch(e){
                 console.log(event.data)
+                console.log(e)
             }
         });
     }
