@@ -304,7 +304,7 @@
       "y": 0
     },
     "_angularVelocity": 0,
-    "_fixedRotation": false,
+    "_fixedRotation": true,
     "_id": ""
   },
   {
@@ -383,6 +383,8 @@
     "__prefab": {
       "__id__": 19
     },
+    "jumpHeight": 50,
+    "jumpDuration": 0.3,
     "labelName": {
       "__id__": 5
     },

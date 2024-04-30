@@ -1,4 +1,4 @@
-import { _decorator, CCFloat, Collider2D, Component, Contact2DType, director, EventKeyboard, Input, input, instantiate, IPhysics2DContact, KeyCode, Label, loader, Node, Prefab } from 'cc';
+import { _decorator, CCFloat, Collider2D, Component, Contact2DType, director, EventKeyboard, Input, input, instantiate, IPhysics2DContact, KeyCode, Label, loader, Node, Prefab, Vec3 } from 'cc';
 import { Ground } from './Ground';
 import { Bird } from './Bird';
 import { Pipe } from './Pipe';
@@ -86,6 +86,23 @@ export class GameCtr extends Component {
                         }
                     }
                 }
+                // lay chuyen dong cua cac player
+                if(result?.type=="position"){
+                    let listPlayer = this.listAnotherPlayer.children;
+                    for(let i=0; i<listPlayer.length; i++){
+                        let anotherPlayer = listPlayer[i].getComponent(AnotherPlayer);
+                        let animation = anotherPlayer.birdAnimation;
+                        if(anotherPlayer.labelName.string == result.name){
+                            let positionCurrent = new Vec3(result.x, result.y, result.z);
+                            listPlayer[i].setPosition(positionCurrent);
+                            if(result.repeatAnmate==10){
+                                animation.play();
+                            }
+                            if(result.repeatAnmate==10) this.z = 0
+                            //anotherPlayer.fly();
+                        }
+                    }
+                }
                 if(this.init){
                     this.bird.resetBird()
                     this.init = false
@@ -124,7 +141,19 @@ export class GameCtr extends Component {
         }
     }
     private i:number = 0
+    private z:number = 0
     protected update(dt: number): void {
+        let positionOfBird = this.bird.birdLocation
+        let pos = {
+            isShared: true,
+            type: "position",
+            name: this.nameLabel.string,
+            x: positionOfBird.x,
+            y: positionOfBird.y,
+            z: positionOfBird.z,
+            repeatAnmate: this.z++
+        }
+        this.socket.initSocket.send(JSON.stringify(pos))
         this.impactGroundPipe();
         if(this.i>=200){
             let prefabs = instantiate(this.pipePrePabs)

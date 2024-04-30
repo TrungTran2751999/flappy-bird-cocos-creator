@@ -18,6 +18,7 @@ export class Bird extends Component {
         type:Label
     })
     public namebird:Label
+
     public birdAnimation:Animation
     public birdLocation:Vec3
     public hitSomething:boolean = false
@@ -25,7 +26,6 @@ export class Bird extends Component {
     protected onLoad(): void {
         // this.resetBird();
         this.birdAnimation = this.getComponent(Animation)
-        this.socket = Socket.getInstance()
     }
     resetBird(){
         this.birdLocation = new Vec3(0,0,0);
@@ -37,6 +37,7 @@ export class Bird extends Component {
             .to(this.jumpDuration, new Vec3(this.node.position.x, this.node.position.y+this.jumpHeight, 0), {easing:"smooth",
                 onUpdate:(target:Vec3, ratio:number)=>{
                     this.node.position = target;
+                    this.birdLocation = target
                 }
             }).start();
         let pos = {
@@ -45,7 +46,6 @@ export class Bird extends Component {
             y: this.node.position.y,
             isShared: true
         }
-        this.socket.initSocket.send(JSON.stringify(pos))
         this.birdAnimation.play();
     }
 }
